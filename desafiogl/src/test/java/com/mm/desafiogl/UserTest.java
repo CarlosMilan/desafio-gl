@@ -11,6 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @SpringBootTest(classes = com.mm.desafiogl.DesafioglApplication.class)
 public class UserTest {
@@ -41,6 +43,41 @@ public class UserTest {
 
         Assert.assertEquals("pepe", userSaved.getName());
 
+    }
+
+    @Test
+    public void emailTest() {
+        String email = "juan.perez_03@email.com.es";
+        String regex = "\\b^[a-zA-Z0-9\\_\\.\\-]+\\b@\\b\\w+(\\.\\w+)+$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(email);
+        Assert.assertTrue("Bad formed email", matcher.find());
+    }
+
+    @Test
+    public void capitalLetterTest() {
+        String password = "1234T213asdnd";
+        String capitalRegex = "[A-Z]{1}";
+        Pattern pattern = Pattern.compile(capitalRegex);
+        Matcher matcher = pattern.matcher(password);
+        int count = 0;
+        while (matcher.find()) {
+            count++;
+        }
+        Assert.assertEquals("There are too many capital letters", 1, count);
+    }
+
+    @Test
+    public void numberAmountTest() {
+        String password = "12Tasdnd";
+        String capitalRegex = "[0-9]{1}";
+        Pattern pattern = Pattern.compile(capitalRegex);
+        Matcher matcher = pattern.matcher(password);
+        int count = 0;
+        while (matcher.find()) {
+            count++;
+        }
+        Assert.assertEquals("Password must have two numbers", 2, count);
     }
 
 }

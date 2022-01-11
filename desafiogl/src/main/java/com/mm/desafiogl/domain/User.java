@@ -3,13 +3,12 @@ package com.mm.desafiogl.domain;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.io.Serializable;
-import java.util.List;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
-public class User implements Serializable {
+public class User {
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -21,8 +20,23 @@ public class User implements Serializable {
     private String email;
     private String password;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Collection<Role> roles = new ArrayList<>();
+
+    private LocalDateTime created;
+    private LocalDateTime lastLogin;
+    private Boolean isActive;
+
     @OneToMany(mappedBy = "user", cascade = {CascadeType.ALL})
     private List<Phone> phones;
+
+    @PrePersist
+    protected void prePersist() {
+        if (this.created == null)
+            this.created = LocalDateTime.now();
+        if (this.isActive == null)
+            this.isActive = true;
+    }
 
     public UUID getId() {
         return id;
@@ -62,5 +76,37 @@ public class User implements Serializable {
 
     public void setPhones(List<Phone> phones) {
         this.phones = phones;
+    }
+
+    public LocalDateTime getCreated() {
+        return created;
+    }
+
+    public void setCreated(LocalDateTime created) {
+        this.created = created;
+    }
+
+    public LocalDateTime getLastLogin() {
+        return lastLogin;
+    }
+
+    public void setLastLogin(LocalDateTime lastLogin) {
+        this.lastLogin = lastLogin;
+    }
+
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
+    }
+
+    public Collection<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Collection<Role> roles) {
+        this.roles = roles;
     }
 }
